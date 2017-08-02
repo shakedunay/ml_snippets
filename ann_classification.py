@@ -8,6 +8,11 @@ main changes:
 
 import numpy as np
 
+def softmax(x):
+    exp_x = np.exp(x)
+
+    return exp_x / np.sum(exp_x, axis=1, keepdims=True)
+
 class Model:
     def __init__(self, nn_hdim, nn_input_dim=2, nn_output_dim=2, reg_lambda=0.01):
         '''
@@ -43,8 +48,7 @@ class Model:
         z1 = X @ W1 + b1
         a1 = np.tanh(z1)
         z2 = a1 @ W2 + b2
-        exp_scores = np.exp(z2)
-        probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+        probs = softmax(z2)
         
         # Calculating the loss
         corect_logprobs = -np.log(probs[range(num_examples), y])
@@ -76,8 +80,7 @@ class Model:
             z1 = X @ W1 + b1
             a1 = np.tanh(z1)
             z2 = a1 @ W2 + b2
-            exp_scores = np.exp(z2)
-            probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+            probs = softmax(z2)
 
             # Backpropagation
             delta3 = probs
@@ -119,8 +122,8 @@ class Model:
         z1 = x @ W1 + b1
         a1 = np.tanh(z1)
         z2 = a1 @ W2 + b2
-        exp_scores = np.exp(z2)
-        probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+        probs = softmax(z2)
+
         prediction = np.argmax(probs, axis=1)
         
         return prediction
