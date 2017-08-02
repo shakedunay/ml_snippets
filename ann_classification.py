@@ -8,24 +8,21 @@ main changes:
 
 import numpy as np
 
-
-class Config:
-    nn_input_dim = 2  # input layer dimensionality
-    nn_output_dim = 2  # output layer dimensionality
-    # Gradient descent parameters (I picked these by hand)
-    epsilon = 0.01  # learning rate for gradient descent
-    reg_lambda = 0.01  # regularization strength
-
 class Model:
-    def __init__(self, nn_hdim):
+    def __init__(self, nn_hdim, nn_input_dim=2, nn_output_dim=2, reg_lambda=0.01):
         '''
             Args:
                 nn_hdim: Number of nodes in the hidden layer
+                nn_input_dim: input layer dimensionality
+                nn_output_dim: output layer dimensionality
+                reg_lambda: regularization strength
         '''
-        W1 = np.random.randn(Config.nn_input_dim, nn_hdim) / np.sqrt(Config.nn_input_dim)
+        self.reg_lambda = reg_lambda
+        
+        W1 = np.random.randn(nn_input_dim, nn_hdim) / np.sqrt(nn_input_dim)
         b1 = np.zeros((1, nn_hdim))
-        W2 = np.random.randn(nn_hdim, Config.nn_output_dim) / np.sqrt(nn_hdim)
-        b2 = np.zeros((1, Config.nn_output_dim))
+        W2 = np.random.randn(nn_hdim, nn_output_dim) / np.sqrt(nn_hdim)
+        b2 = np.zeros((1, nn_output_dim))
 
         self.weights = {
             'W1': W1,
@@ -52,12 +49,13 @@ class Model:
         corect_logprobs = -np.log(probs[range(num_examples), y])
         data_loss = np.sum(corect_logprobs)
         # Add regulatization term to loss (optional)
-        data_loss += Config.reg_lambda / 2 * (np.sum(np.square(W1)) + np.sum(np.square(W2)))
+        data_loss += self.reg_lambda / 2 * (np.sum(np.square(W1)) + np.sum(np.square(W2)))
         return 1. / num_examples * data_loss
 
-    def fit(self, X, y, num_passes=20000, print_loss=False):
+    def fit(self, X, y, epsilon=0.01, num_passes=20000, print_loss=False):
         '''
             This function learns parameters for the neural network and update the weights of the model.
+                epsilon: learning rate for gradient descent
                 num_passes: Number of passes through the training data for gradient descent
                 print_loss: If True, print the loss every 1000 iterations
         '''
@@ -88,14 +86,14 @@ class Model:
             db1 = np.sum(delta2, axis=0)
 
             # Add regularization terms (b1 and b2 don't have regularization terms)
-            dW2 += Config.reg_lambda * W2
-            dW1 += Config.reg_lambda * W1
+            dW2 += self.reg_lambda * W2
+            dW1 += self.reg_lambda * W1
 
             # Gradient descent parameter update
-            W1 += -Config.epsilon * dW1
-            b1 += -Config.epsilon * db1
-            W2 += -Config.epsilon * dW2
-            b2 += -Config.epsilon * db2
+            W1 += -epsilon * dW1
+            b1 += -epsilon * db1
+            W2 += -epsilon * dW2
+            b2 += -epsilon * db2
 
             # Assign new parameters to the model
             weights = {
