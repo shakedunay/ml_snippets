@@ -1,3 +1,11 @@
+'''
+modification of https://github.com/dennybritz/nn-from-scratch
+main changes:
+    * be more readable
+    * Object Oriented
+    * use @ instead of dot
+'''
+
 import numpy as np
 
 
