@@ -45,11 +45,14 @@ class Model:
         z2 = a1 @ W2 + b2
         exp_scores = np.exp(z2)
         probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+        
         # Calculating the loss
         corect_logprobs = -np.log(probs[range(num_examples), y])
         data_loss = np.sum(corect_logprobs)
+        
         # Add regulatization term to loss (optional)
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(W1)) + np.sum(np.square(W2)))
+        
         return 1. / num_examples * data_loss
 
     def fit(self, X, y, epsilon=0.01, num_passes=20000, print_loss=False):
@@ -118,4 +121,6 @@ class Model:
         z2 = a1 @ W2 + b2
         exp_scores = np.exp(z2)
         probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
-        return np.argmax(probs, axis=1)
+        prediction = np.argmax(probs, axis=1)
+        
+        return prediction
