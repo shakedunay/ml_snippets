@@ -52,7 +52,7 @@ class Model:
         data_loss = np.sum(corect_logprobs)
         
         # Add regulatization term to loss (optional)
-        data_loss += self.reg_lambda / 2 * (np.sum(np.square(W1)) + np.sum(np.square(W2)))
+        data_loss += self.reg_lambda / 2 * (np.sum(W1**2) + np.sum(W2**2))
         
         return 1. / num_examples * data_loss
 
