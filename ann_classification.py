@@ -35,20 +35,17 @@ class Model:
             'W2': W2,
             'b2': b2
         }
-
+    
     def calculate_loss(self, X, y):
         'Helper function to evaluate the total loss on the dataset'
 
         weights = self.weights
         W1, b1, W2, b2 = weights['W1'], weights['b1'], weights['W2'], weights['b2']
-
+        
         num_examples = len(X)  # training set size
 
         # Forward propagation to calculate our predictions
-        z1 = X @ W1 + b1
-        a1 = np.tanh(z1)
-        z2 = a1 @ W2 + b2
-        probs = softmax(z2)
+        probs = self.feed_forward(X, W1, b1, W2, b2)
         
         # Calculating the loss
         corect_logprobs = -np.log(probs[range(num_examples), y])
@@ -114,16 +111,21 @@ class Model:
             if print_loss and i % 1000 == 0:
                 print("Loss after iteration %i: %f" % (i, self.calculate_loss(X, y)))
 
-    def predict(self, x):
+    def predict(self, X):
         weights = self.weights
         W1, b1, W2, b2 = weights['W1'], weights['b1'], weights['W2'], weights['b2']
 
         # Forward propagation
-        z1 = x @ W1 + b1
-        a1 = np.tanh(z1)
-        z2 = a1 @ W2 + b2
-        probs = softmax(z2)
-
+        probs = self.feed_forward(X, W1, b1, W2, b2)
         prediction = np.argmax(probs, axis=1)
         
         return prediction
+
+
+    def feed_forward(self, X, W1, b1, W2, b2):
+            z1 = X @ W1 + b1
+            a1 = np.tanh(z1)
+            z2 = a1 @ W2 + b2
+            probs = softmax(z2)
+
+            return probs
