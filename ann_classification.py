@@ -100,7 +100,7 @@ class Model:
                 'W1': W1,
                 'b1': b1,
                 'W2': W2,
-                'b2': b2
+                'b2': b2,
             }
 
             # Optionally print the loss.
